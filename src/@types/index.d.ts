@@ -8,3 +8,19 @@ export interface TransactionRequest {
       createdAt: Date;
    }
 }
+
+export interface LoginRequest {
+   Body: {
+      username: string;
+      password: string;
+   }
+}
+
+
+export interface RegisterRequest {
+   Body: {
+     confirmPassword: string
+     username: string;
+      password: string;
+   }
+}
