@@ -21,12 +21,14 @@ model Transaction {
   category    String
   price       Float
   createdAt   DateTime         @default(now())
+  user        User             @relation(fields: [id], references: [id])
 }
 
 model User {
   id       String    @id @default(uuid())
   username String @unique
   password String
+  transactions Transaction[]
 }
 
 

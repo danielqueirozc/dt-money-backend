@@ -22,9 +22,9 @@ async function buildServer() {
 
     
     
-    // JWT
+    // Autenticação com JWT
     await app.register(fastifyJwt, {secret: process.env.JWT_SECRET || 'secret'})
-    
+
     app.decorate('authenticate', async function (request: FastifyRequest, reply: FastifyReply) {
         try {
             await request.jwtVerify();
@@ -37,28 +37,28 @@ async function buildServer() {
     // Rotas
     app.post('/register', async (request: FastifyRequest<RegisterRequest>, reply: FastifyReply) => {
         try {
-            const { username, password, confirmPassword } = request.body;
+            const { username, password, ConfirmPassword } = request.body;
 
-            const existingUser = await prisma.user.findUnique({where: {username}})
+            const existingUser = await prisma.user.findUnique({where: { username }})
 
             if (existingUser) {
-                return reply.status(404).send({
-                    error: 'User already exists'
+                return reply.status(409).send({
+                    message: 'User already exists'
                 })
             }
 
-            if (password || typeof password !== 'string') {
+            if (!password || typeof password !== 'string') {
                 return reply.status(400).send({
-                    error: 'Password must be a string'
+                    message: 'Password must be a string'
                 })
             }
 
-            if (password !== confirmPassword) {
+            if (password !== ConfirmPassword) {
                     throw new Error('Passwords do not match'); 
                 }
             
 
-            const PasswordHash = await bcrypt.hash(password.toString(), 10);
+            const PasswordHash = await bcrypt.hash(password.toString(), 10)
 
             const user = await prisma.user.create({
                 data: {
@@ -84,27 +84,31 @@ async function buildServer() {
     })
 
     app.post<LoginRequest>('/login', async (request: FastifyRequest<LoginRequest>, reply: FastifyReply) => {
-        try {
-            const { username, password } = request.body
+        const { username, password } = request.body
 
-            const user = await prisma.user.findUnique({where: {username}})
-            if (!user) {
-                return reply.status(404).send({
-                    error: 'User not found'
-                })
-            }
-
-            const isPasswordValid = await bcrypt.compare(password.toString(), user.password)
-            if (!isPasswordValid) {
-                return reply.status(401).send({
-                    error: 'Invalid password'
-                })
-            }
-
+        const user = await prisma.user.findUnique({where: {username}})
+        if (!user) {
+            return reply.status(404).send({
+                error: 'User not found'
+            })
         }
+
+        const isPasswordValid = await bcrypt.compare(password.toString(), user.password)
+        if (!isPasswordValid) {
+            return reply.status(401).send({
+                error: 'Invalid password'
+            })
+        }
+
+        const token = app.jwt.sign({id: user.id, username: user.username})
+
+        return reply.send({ token })
+
     })
 
-    app.post<TransactionRequest>('/', async (request: FastifyRequest<TransactionRequest>, reply: FastifyReply) => {
+
+    // Rotas protegidas
+    app.post<TransactionRequest>('/transactions', {preHandler: [app.authenticate]}, async (request: FastifyRequest<TransactionRequest>, reply: FastifyReply) => {
        try {
         const { id, description, type, category, price } = request.body
 
@@ -130,7 +134,7 @@ async function buildServer() {
 
     });
 
-    app.get('/', async (request: FastifyRequest, reply: FastifyReply) => {
+    app.get('/transactions', {preHandler: [app.authenticate]}, async (request: FastifyRequest, reply: FastifyReply) => {
         try {
             const transactions = await prisma.transaction.findMany()
             return reply.status(200).send(transactions)

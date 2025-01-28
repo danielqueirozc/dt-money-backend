@@ -19,8 +19,14 @@ export interface LoginRequest {
 
 export interface RegisterRequest {
    Body: {
-     confirmPassword: string
+     ConfirmPassword: string
      username: string;
       password: string;
+   }
+}
+
+export declare module 'fastify' {
+   interface FastifyInstance {
+       authenticate: (request: FastifyRequest, reply: FastifyReply) => Promise<void>;
    }
 }
