@@ -20,6 +20,5 @@ describe('Register use case', () => {
 
         expect(user.id).toEqual(expect.any(String))
     })
-
     
 })
