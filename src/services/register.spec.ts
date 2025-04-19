@@ -1,7 +1,9 @@
+
 import { describe, expect, it, beforeEach } from 'vitest'
 
 import { RegisterService } from './register'
 import { InMemoryUsersRepository } from '@/repositories/in-memory/in-memory-users-repository'
+
 
 let usersRepository: InMemoryUsersRepository
 let sut: RegisterService
@@ -21,4 +23,5 @@ describe('Register use case', () => {
 
         expect(user.id).toEqual(expect.any(String))  // Corrigi "tofqual" para "toEqual"
     })
+
 })
