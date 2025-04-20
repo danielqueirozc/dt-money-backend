@@ -17,11 +17,11 @@ describe('Register use case', () => {
     it('should be able to register', async () => {
         const { user } = await sut.execute({
             name: 'Daniel',
-            email: 'daniel@example.com',  // Corrigi o email (@ faltando)
+            email: 'daniel@example.com',
             password: '123456'
         })
 
-        expect(user.id).toEqual(expect.any(String))  // Corrigi "tofqual" para "toEqual"
+        expect(user.id).toEqual(expect.any(String))
     })
 
 })
