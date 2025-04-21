@@ -1,13 +1,13 @@
 import { TransactionsRepository } from "@/repositories/transactios-repository";
 import { Prisma, Transaction } from "@prisma/client";
-interface TrnsactionRequest {
+interface TransactionRequest {
     data: Prisma.TransactionCreateInput
 }
 
 export class TransactionService {
     constructor(private transactionRepository: TransactionsRepository) {}
 
-    async execute({ data }: TrnsactionRequest): Promise<Transaction> {
+    async execute({ data }: TransactionRequest): Promise<Transaction> {
         const transaction = await this.transactionRepository.create(data) // constructor e public se referir com this
 
         return transaction
