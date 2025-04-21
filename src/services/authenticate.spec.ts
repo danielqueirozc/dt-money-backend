@@ -16,7 +16,7 @@ describe('autheticate use case', () => {
     it('should be able to authenticate', async () => {
         await usersRepository.create({
             name: 'Daniel',
-            email: 'daniel@example.com',  // Corrigi o email (@ faltando)
+            email: 'daniel@example.com', 
             password_hash: await hash('123456', 6)
         })
 
@@ -25,6 +25,6 @@ describe('autheticate use case', () => {
             password: '123456'
         })
 
-        expect(user.id).toEqual(expect.any(String))  // Corrigi "tofqual" para "toEqual"
+        expect(user.id).toEqual(expect.any(String))
     })
 })
