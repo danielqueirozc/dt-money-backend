@@ -13,12 +13,24 @@ export async function Authenticate(request: FastifyRequest, reply: FastifyReply)
     try {
         const authenticateService = MakeAuthenticateService()
 
-        await authenticateService.execute({ email, password })
+        const { token } = await authenticateService.execute({ email, password })
+
+        reply.setCookie('token', token, {
+            path: '/',
+            httpOnly: true,
+            secure: true, // só em HTTPS
+            sameSite: 'strict',
+            maxAge: 60 * 60 * 24, // 60: 1 minuto, 60: 1 hora, 24: 1 dia
+        })
+
+        return reply.status(200).send()
+
     } catch (error) {
         if (error instanceof Error) {
             return reply.status(400).send({ message: error.message })
         }
+
+        return reply.status(500).send({ message: 'Internal server error' })
     }
 
-    return reply.status(200).send()
 }
