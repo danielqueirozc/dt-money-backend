@@ -1,3 +1,4 @@
+import { app } from "@/app";
 import { UsersRepository } from "@/repositories/users-repository";
 import { User } from "@prisma/client";
 import { compare } from "bcryptjs";
@@ -9,6 +10,7 @@ interface AuthenticateRequest {
 
 interface AuthenticateResponse {
     user: User
+    token: string
 }
 
 export class AuthenticateService {
@@ -27,8 +29,16 @@ export class AuthenticateService {
             throw new Error('Invalid credentials.')
         }
 
+
+        // cria o token
+        const token = app.jwt.sign({
+                sub: user.id,
+                expiresIn: '1d'
+        })
+
         return {
-            user
+            user,
+            token
         }
 
     }
