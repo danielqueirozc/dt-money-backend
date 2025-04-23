@@ -18,12 +18,12 @@ export async function Authenticate(request: FastifyRequest, reply: FastifyReply)
         reply.setCookie('token', token, {
             path: '/',
             httpOnly: true,
-            secure: true, // só em HTTPS
+            secure: false, // só em HTTPS
             sameSite: 'strict',
             maxAge: 60 * 60 * 24, // 60: 1 minuto, 60: 1 hora, 24: 1 dia
         })
 
-        return reply.status(200).send()
+        return reply.status(200).send({ message: 'Autenticado com sucesso' })
 
     } catch (error) {
         if (error instanceof Error) {
