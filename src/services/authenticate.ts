@@ -18,6 +18,8 @@ export class AuthenticateService {
 
     async execute({ email, password }: AuthenticateRequest): Promise<AuthenticateResponse> {
         const user = await this.usersRepository.findByEmail(email)
+        console.log("Usuário encontrado:", user)
+
 
         if (!user) {
             throw new Error('Invalid credentials.')
