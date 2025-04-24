@@ -1,7 +1,7 @@
-import { app } from "@/app";
 import { UsersRepository } from "@/repositories/users-repository";
 import { User } from "@prisma/client";
 import { compare } from "bcryptjs";
+import { TokenProvider } from "./token-provider";
 
 interface AuthenticateRequest {
     email: string
@@ -14,7 +14,10 @@ interface AuthenticateResponse {
 }
 
 export class AuthenticateService {
-    constructor(private usersRepository: UsersRepository) {}
+    constructor(
+        private usersRepository: UsersRepository,
+        private tokenProvider: TokenProvider
+    ) {}
 
     async execute({ email, password }: AuthenticateRequest): Promise<AuthenticateResponse> {
         const user = await this.usersRepository.findByEmail(email)
@@ -33,10 +36,7 @@ export class AuthenticateService {
 
 
         // cria o token
-        const token = app.jwt.sign({
-                sub: user.id,
-                expiresIn: '1d'
-        })
+        const token = this.tokenProvider.sign({ sub: user.id })
 
         return {
             user,
