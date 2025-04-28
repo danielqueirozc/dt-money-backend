@@ -1,5 +1,6 @@
 import fastify from "fastify";
 import fastifyJwt from "fastify-jwt";
+import cors from '@fastify/cors'
 
 import 'dotenv/config'
 import fastifyCookie from "@fastify/cookie";
@@ -17,3 +18,6 @@ app.register(fastifyJwt, {
 
 app.register(fastifyCookie)
 app.register(AppRoutes)
+app.register(cors, {
+    origin: true
+})

@@ -23,7 +23,7 @@ export async function Authenticate(request: FastifyRequest, reply: FastifyReply)
             maxAge: 60 * 60 * 24, // 60: 1 minuto, 60: 1 hora, 24: 1 dia
         })
 
-        return reply.status(200).send({ message: 'Autenticado com sucesso' })
+        return reply.status(200).send({ message: 'Autenticado com sucesso', token })
 
     } catch (error) {
         if (error instanceof Error) {
