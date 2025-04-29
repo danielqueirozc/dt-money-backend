@@ -38,7 +38,9 @@ model Transaction {
   createdAt   DateTime        @default(now())
 
   user   User   @relation(fields: [userId], references: [id])
-  userId String @unique
+  userId String
 
   @@map("transactions")
 }
+
+// se voce colocar @unique no transaction o banco so vai aceitar 1 cadastro por usuario
